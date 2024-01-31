@@ -61,7 +61,6 @@ RUN apt install -y containerd=1.7.2-0ubuntu1~22.04.1 runc
 RUN apt install -y kubelet=1.25.3-00 cri-tools=1.25.0-00 kubernetes-cni=1.1.1-00
 RUN apt-mark hold kubelet cri-tools kubernetes-cni
 RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/*mstflint*.deb || true
-RUN apt-mark hold mstflint
 RUN apt remove -y --purge $(dpkg --list "*openipmi*" | grep openipmi | awk '{print $2}') || true
 RUN apt install -y -f doca-runtime doca-tools doca-sdk || true
 RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/mlxbf-gige-modules*.deb || true

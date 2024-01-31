@@ -1,6 +1,17 @@
 #!/bin/bash
 
+apt update -y
+apt install -y linux-generic-hwe-22.04
 
 kernel=`/bin/ls -1tr /lib/modules | tail -1`
+
+wget --quiet https://linux.mellanox.com/public/repo/bluefield/latest/extras/mlnx_ofed/23.10-1.2.0.0/MLNX_OFED_SRC-debian-23.10-1.2.0.0.tgz
+tar xzf MLNX_OFED_SRC-debian-23.10-1.2.0.0.tgz
+MLNX_OFED_SRC-23.10-1.2.0.0/install.pl --force -k $kernel --kernel-sources /lib/modules/$kernel/build --kernel-only
+
+wget -qO - https://linux.mellanox.com/public/repo/doca/latest/ubuntu22.04/aarch64/GPG-KEY-Mellanox.pub | apt-key add -
+echo "deb [trusted=yes] https://linux.mellanox.com/public/repo/doca/latest/ubuntu22.04/\$(ARCH) ./" | tee /etc/apt/sources.list.d/doca.tmp.list
+apt update
+apt install -y doca-runtime-user doca-sdk-user doca-tools
 
 /root/workspace/create_bfb -k $kernel
