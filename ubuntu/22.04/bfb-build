@@ -71,6 +71,7 @@ cp -a \
 	build_ubuntu_bfb \
 	create_bfb \
 	install.sh \
+	install_modules.sh \
 	install.env \
 	../../common/tools/qemu-aarch64-static \
 	$WDIR

@@ -16,6 +16,7 @@ ARG DISTRO_VERSION
 ARG MLNX_FW_UPDATER=mlnx-fw-updater-signed
 WORKDIR /root/workspace
 ADD install.sh .
+ADD install_modules.sh .
 ADD install.env ./install.env
 ADD create_bfb .
 ADD build_ubuntu_bfb .
@@ -73,6 +74,7 @@ RUN apt-mark hold mstflint
 RUN apt remove -y --purge $(dpkg --list "*openipmi*" | grep openipmi | awk '{print $2}') || true
 RUN apt install -y -f $MLNX_FW_UPDATER
 RUN apt install -y mlnx-ofed-kernel-only
+RUN ./install_modules.sh
 RUN apt install -y -f doca-runtime-user doca-tools doca-sdk-user || true
 RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/mlx-*openipmi*.deb || true
 RUN apt --fix-broken install -y || true
