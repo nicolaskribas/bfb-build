@@ -31,6 +31,7 @@ ENV RUN_FW_UPDATER=no
 RUN mkdir -p /run/systemd; echo docker > /run/systemd/container
 
 RUN apt update
+RUN apt-get install -y --install-recommends linux-generic-hwe-22.04 linux-headers-generic-hwe-22.04
 RUN apt upgrade -y
 RUN apt remove --purge -y snapd plymouth
 RUN apt autoremove -y
@@ -52,6 +53,9 @@ RUN echo 'set superusers="admin"' >> /etc/grub.d/40_custom; \
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python2.7 10
 
+RUN wget https://linux.mellanox.com/public/repo/mlnx_ofed/latest-24.01/ubuntu22.04/mellanox_mlnx_ofed.list -P /etc/apt/sources.list.d/
+RUN wget -qO - http://www.mellanox.com/downloads/ofed/RPM-GPG-KEY-Mellanox | sudo apt-key add -
+
 RUN wget -qO - $BASE_URL/doca/$DOCA_VERSION/ubuntu22.04/aarch64/GPG-KEY-Mellanox.pub | sudo apt-key add -
 RUN echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.25/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
 RUN curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.25/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -68,7 +72,8 @@ RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/*mstflint*.deb || true
 RUN apt-mark hold mstflint
 RUN apt remove -y --purge $(dpkg --list "*openipmi*" | grep openipmi | awk '{print $2}') || true
 RUN apt install -y -f $MLNX_FW_UPDATER
-RUN apt install -y -f doca-runtime doca-tools doca-sdk || true
+RUN apt install -y mlnx-ofed-kernel-only
+RUN apt install -y -f doca-runtime-user doca-tools doca-sdk-user || true
 RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/mlx-*openipmi*.deb || true
 RUN apt --fix-broken install -y || true
 RUN dpkg -i /var/doca-dpu-repo-ubuntu2204-local/mlnx-snap_*arm64.deb || true
